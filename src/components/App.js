@@ -10,6 +10,7 @@ const INITIAL_STATE = {
   questions: {},
   // 'loading', 'error', 'ready', 'active', 'finished'
   status: "loading",
+  questionIndex: 0,
 };
 
 function reducer(state, action) {
@@ -36,7 +37,10 @@ function reducer(state, action) {
 }
 
 export default function App() {
-  const [{ questions, status }, dispatch] = useReducer(reducer, INITIAL_STATE);
+  const [{ questions, status, questionIndex }, dispatch] = useReducer(
+    reducer,
+    INITIAL_STATE
+  );
 
   const numOfQuestions = questions.length;
 
@@ -56,7 +60,9 @@ export default function App() {
         {status === "ready" && (
           <Start numOfQuestions={numOfQuestions} dispatch={dispatch} />
         )}
-        {status === "active" && <Question />}
+        {status === "active" && (
+          <Question question={questions[questionIndex]} />
+        )}
       </Main>
     </div>
   );
