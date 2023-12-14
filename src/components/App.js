@@ -4,6 +4,7 @@ import Main from "./Main";
 import Loader from "./Loader";
 import Error from "./Error";
 import Start from "./Start";
+import Question from "./Question";
 
 const INITIAL_STATE = {
   questions: {},
@@ -23,6 +24,11 @@ function reducer(state, action) {
       return {
         ...state,
         status: "error",
+      };
+    case "start":
+      return {
+        ...state,
+        status: "active",
       };
     default:
       throw new Error("Unknown action");
@@ -47,8 +53,10 @@ export default function App() {
       <Main>
         {status === "loading" && <Loader />}
         {status === "error" && <Error />}
-        {status === "ready" && <Start numOfQuestions={numOfQuestions} />}
-        {status === "active" && <Questions />}
+        {status === "ready" && (
+          <Start numOfQuestions={numOfQuestions} dispatch={dispatch} />
+        )}
+        {status === "active" && <Question />}
       </Main>
     </div>
   );
