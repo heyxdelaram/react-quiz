@@ -13,6 +13,7 @@ const INITIAL_STATE = {
   status: "loading",
   questionIndex: 0,
   answer: null,
+  points: 0,
 };
 
 function reducer(state, action) {
@@ -37,6 +38,11 @@ function reducer(state, action) {
       return {
         ...state,
         answer: action.payload,
+        //points
+        points:
+          action.payload === state.questions[state.questionIndex].correctOption
+            ? state.points + state.questions[state.questionIndex].points
+            : state.points,
       };
     case "nextQuestion":
       return {
