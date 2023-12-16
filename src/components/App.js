@@ -8,6 +8,7 @@ import Question from "./Question";
 import NextButton from "./NextButton";
 import Progress from "./Progress";
 import Finish from "./Finish";
+import Timer from "./Timer";
 
 const INITIAL_STATE = {
   questions: {},
@@ -17,7 +18,9 @@ const INITIAL_STATE = {
   answer: null,
   points: 0,
   highscore: 0,
+  remainingSecs: null,
 };
+const SECS_PER_QUESTION = 30;
 
 function reducer(state, action) {
   switch (action.type) {
@@ -36,6 +39,7 @@ function reducer(state, action) {
       return {
         ...state,
         status: "active",
+        remainingSecs: state.questions.length * SECS_PER_QUESTION,
       };
     case "answered":
       return {
@@ -62,11 +66,15 @@ function reducer(state, action) {
       };
     case "restart":
       return {
-        ...state,
-        questionIndex: 0,
+        ...INITIAL_STATE,
+        questions: state.questions,
         status: "ready",
-        answer: null,
-        points: 0,
+        highscore: state.highscore,
+      };
+    case "tick":
+      return {
+        ...state,
+        remainingSecs: state.remainingSecs - 1,
       };
     default:
       throw new Error("Unknown action");
@@ -75,7 +83,15 @@ function reducer(state, action) {
 
 export default function App() {
   const [
-    { questions, status, questionIndex, answer, points, highscore },
+    {
+      questions,
+      status,
+      questionIndex,
+      answer,
+      points,
+      highscore,
+      remainingSecs,
+    },
     dispatch,
   ] = useReducer(reducer, INITIAL_STATE);
 
@@ -116,9 +132,12 @@ export default function App() {
               answer={answer}
               dispatch={dispatch}
             />
-            {answer !== null ? (
-              <NextButton dispatch={dispatch} questionIndex={questionIndex} />
-            ) : null}
+            <footer className="footer">
+              <Timer dispatch={dispatch} remainingSecs={remainingSecs} />
+              {answer !== null ? (
+                <NextButton dispatch={dispatch} questionIndex={questionIndex} />
+              ) : null}
+            </footer>
           </>
         )}
         {status === "finished" && (
